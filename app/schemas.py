@@ -8,6 +8,10 @@ class GroupBase(BaseModel):
 class GroupCreate(GroupBase):
     pass
 
+class GroupUpdate(BaseModel):
+    name : Optional[str] = None
+    description: Optional[str] = None
+    
 class GroupRead(GroupBase):
     id: int
     class Config:

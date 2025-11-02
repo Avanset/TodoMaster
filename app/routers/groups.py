@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException,Response
 from sqlalchemy.orm import Session
 from sqlalchemy import select
 from ..database import get_db
@@ -26,3 +26,28 @@ def get_group(group_id: int, db: Session = Depends(get_db)):
     if not g:
         raise HTTPException(status_code=404,detail='Group not found') 
     return g   
+
+@router.patch('/{group_id}', status_code=204)
+def update_group(group_id: int, group: schemas.GroupUpdate, db: Session = Depends(get_db)):
+    g = db.get(modeles.TaskGroup, group_id)
+    
+    if not g:
+        raise HTTPException(status_code=404, detail='Group not found')
+    for key, value in group.model_dump(exclude_none=True).items():
+        setattr(g,key,value)
+    db.commit()
+    db.refresh(g)
+    
+    return g
+
+@router.delete('/{group_id}',status_code=204)
+def delete_group(group_id: int, db: Session = Depends(get_db)):
+    g = db.get(modeles.TaskGroup, group_id)
+    
+    if not g:
+        raise HTTPException(status_code=404, detail='Group not found')
+    
+    db.delete(g)
+    db.commit()
+    
+    return Response(status_code=204)
