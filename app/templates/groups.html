@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+{% block content %}
+<section class="card">
+    <h2>Groups</h2>
+    <form action="/groups/create" method="post" class="stack">
+        <label>名前 <input name="name" required></label>
+        <label>説明 <textarea name="description"></textarea></label>
+        <button type="submit">作成</button>
+    </form>
+    <hr>
+    {% if groups %}
+    <ul>
+        {% for g in groups %}
+        <li>
+            <strong>{{ g.name }}</strong> — {{ g.description or "" }}
+            <form action="/groups/{{ g.id }}/delete" method="post" style="display:inline;">
+                <button type="submit">削除</button>
+            </form>
+        </li>
+        {% endfor %}
+    </ul>
+    {% else %}
+    <p>まだグループがありません。</p>
+    {% endif %}
+</section>
+{% endblock %}

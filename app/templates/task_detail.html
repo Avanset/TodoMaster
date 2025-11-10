@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+{% block content %}
+<section class="card">
+    <h2>Task #{{ task.id }}</h2>
+    <form action="/tasks/{{ task.id }}/update" method="post" class="stack">
+        <label>名前 <input name="name" value="{{ task.name }}" required></label>
+        <label>ステータス
+            <select name="status">
+                {% for s in ["todo","doing","done"] %}
+                <option value="{{ s }}" {% if task.status==s %}selected{% endif %}>{{ s }}</option>
+                {% endfor %}
+            </select>
+        </label>
+        <label>並び順 <input type="number" name="order" value="{{ task.order }}"></label>
+        <label>グループ
+            <select name="group_id">
+                <option value="">(なし)</option>
+                {% for g in groups %}
+                <option value="{{ g.id }}" {% if task.group and task.group.id==g.id %}selected{% endif %}>{{ g.name }}
+                </option>
+                {% endfor %}
+            </select>
+        </label>
+        <label>説明 <textarea name="description">{{ task.description or "" }}</textarea></label>
+        <button type="submit">更新</button>
+    </form>
+</section>
+
+<section class="card">
+    <h3>Work Notes</h3>
+    <form action="/notes/create" method="post" class="stack">
+        <input type="hidden" name="task_id" value="{{ task.id }}">
+        <label>メモ <textarea name="note" required></textarea></label>
+        <button type="submit">追加</button>
+    </form>
+    <ul>
+        {% for n in task.notes %}
+        <li>
+            {{ n.note }}
+            <form action="/notes/{{ n.id }}/delete" method="post" style="display:inline;">
+                <input type="hidden" name="task_id" value="{{ task.id }}">
+                <button type="submit">削除</button>
+            </form>
+        </li>
+        {% else %}
+        <li>まだメモがありません。</li>
+        {% endfor %}
+    </ul>
+</section>
+{% endblock %}

@@ -1,0 +1,60 @@
+{% extends "base.html" %}
+{% block content %}
+<section class="card">
+    <h2>Tasks</h2>
+    <form action="/tasks/create" method="post" class="grid">
+        <label>名前 <input name="name" required></label>
+        <label>ステータス
+            <select name="status">
+                <option value="todo">todo</option>
+                <option value="doing">doing</option>
+                <option value="done">done</option>
+            </select>
+        </label>
+        <label>並び順 <input type="number" name="order" value="0"></label>
+        <label>グループ
+            <select name="group_id">
+                <option value="">(なし)</option>
+                {% for g in groups %}
+                <option value="{{ g.id }}" {% if g.id==group_id %}selected{% endif %}>{{ g.name }}</option>
+                {% endfor %}
+            </select>
+        </label>
+        <label>説明 <textarea name="description"></textarea></label>
+        <button type="submit">作成</button>
+    </form>
+    <hr>
+    {% if tasks %}
+    <table>
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>名前</th>
+                <th>ステータス</th>
+                <th>並び順</th>
+                <th>グループ</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for t in tasks %}
+            <tr>
+                <td>{{ t.id }}</td>
+                <td><a href="/tasks/{{ t.id }}/detail">{{ t.name }}</a></td>
+                <td>{{ t.status }}</td>
+                <td>{{ t.order }}</td>
+                <td>{{ t.group.name if t.group else "" }}</td>
+                <td>
+                    <form action="/tasks/{{ t.id }}/delete" method="post">
+                        <button type="submit">削除</button>
+                    </form>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <p>該当タスクがありません。</p>
+    {% endif %}
+</section>
+{% endblock %}

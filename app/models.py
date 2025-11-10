@@ -25,3 +25,17 @@ class Task(Base):
     description: Mapped[str | None] = mapped_column(Text, nullable=True)
     
     group: Mapped[TaskGroup | None] = relationship(back_populates='tasks')
+    
+    notes: Mapped[list['WorkNote']] = relationship(
+        back_populates='task',
+        cascade='all, delete-orphan'
+    )
+
+class WorkNote(Base):
+    __tablename__ = 'work_notes'
+    
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
+    task_id: Mapped[int] = mapped_column(ForeignKey('tasks.id'),nullable=False)
+    note: Mapped[str] = mapped_column(Text, nullable=False)
+    
+    task: Mapped['Task'] = relationship(back_populates='notes')

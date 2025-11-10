@@ -36,8 +36,24 @@ class TaskUpdate(BaseModel):
     order: Optional[int] = None
     group_id: Optional[int] = None
     description: Optional[str] = None
+          
+class WorkNoteBase(BaseModel):
+    note: str
     
+class WorkNoteCreate(WorkNoteBase):
+    task_id: int
+
+class WorkNoteUpdate(WorkNoteBase):
+    task_id: int
+        
+class WorkNoteRead(WorkNoteBase):
+    id: int
+    task_id: int
+    class Config:
+        from_attributes = True
+        
 class TaskRead(TaskBase):
     id: int
+    notes: list[WorkNoteRead] = []
     class Config:
         from_attributes = True
